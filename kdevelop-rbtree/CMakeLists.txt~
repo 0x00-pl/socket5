@@ -1,6 +1,0 @@
-project(kdevelop-rbtree)
-
-SET(SOURCE src/main.c)
-
-add_executable(kdevelop-rbtree ${SOURCE})
-
