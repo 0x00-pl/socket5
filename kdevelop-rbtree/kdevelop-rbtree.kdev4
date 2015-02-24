@@ -1,0 +1,4 @@
+[Project]
+Name=kdevelop-rbtree
+Manager=KDevCMakeManager
+VersionControl=

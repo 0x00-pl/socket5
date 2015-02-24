@@ -1,0 +1,1 @@
+/usr/bin/gcc  -g -Wall -Wextra -Wformat=2 -Wstrict-aliasing=2 -Wcast-align -Wwrite-strings -Wformat-nonliteral -Wconversion -Wfloat-equal -Wpointer-arith -Wswitch-enum -g    CMakeFiles/kdevelop-rbtree-test.dir/src/test.c.o CMakeFiles/kdevelop-rbtree-test.dir/src/rb_tree.c.o  -o kdevelop-rbtree-test -rdynamic 

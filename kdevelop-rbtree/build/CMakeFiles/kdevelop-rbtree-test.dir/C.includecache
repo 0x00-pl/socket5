@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/pl/Documents/kdevelop/socket5/kdevelop-rbtree/src/rb_tree.c
+rb_tree.h
+/home/pl/Documents/kdevelop/socket5/kdevelop-rbtree/src/rb_tree.h
+
+/home/pl/Documents/kdevelop/socket5/kdevelop-rbtree/src/rb_tree.h
+stddef.h
+-
+
+/home/pl/Documents/kdevelop/socket5/kdevelop-rbtree/src/test.c
+stdio.h
+-
+stdlib.h
+-
+rb_tree.h
+/home/pl/Documents/kdevelop/socket5/kdevelop-rbtree/src/rb_tree.h
+
