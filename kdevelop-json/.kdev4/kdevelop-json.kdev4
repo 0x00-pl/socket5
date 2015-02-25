@@ -1,0 +1,16 @@
+[CMake]
+BuildDirs=/home/pl/Documents/kdevelop/socket5/kdevelop-json/build
+CMakeDir=/usr/share/cmake-2.8/Modules
+Current CMake Binary=file:///usr/bin/cmake
+CurrentBuildDir=file:///home/pl/Documents/kdevelop/socket5/kdevelop-json/build
+CurrentBuildType=Debug
+CurrentInstallDir=file:///usr/local
+Environment Profile=default
+Extra Arguments=
+ProjectRootRelative=./
+
+[MakeBuilder]
+Number Of Jobs=1
+
+[Project]
+VersionControlSupport=kdevgit

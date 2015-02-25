@@ -20,6 +20,7 @@ static void left_rotate(rb_node **proot, rb_node *n){
     new_n->left = n;
     n->parent = new_n;
 }
+
 static void right_rotate(rb_node **proot, rb_node *n){
     rb_node * new_n = n->left;
     
@@ -120,6 +121,7 @@ void rbt_after_insert(rb_node **proot, rb_node *n){
     (*proot)->color = RBT_COLOR_BLACK;
 }
 
+
 rb_node *rbt_min(rb_node *n){
     if(n == NULL) {return NULL;}
     while(n->left != NULL){
@@ -127,6 +129,7 @@ rb_node *rbt_min(rb_node *n){
     }
     return n;
 }
+
 rb_node *rbt_max(rb_node *n){
     if(n == NULL) {return NULL;}
     while(n->right != NULL){
@@ -148,6 +151,7 @@ rb_node *rbt_prev(rb_node *n){
         return NULL;
     }
 }
+
 rb_node *rbt_next(rb_node *n){
     if(n->right != NULL){
         return rbt_min(n->right);
@@ -161,6 +165,7 @@ rb_node *rbt_next(rb_node *n){
         return NULL;
     }
 }
+
 
 static int rbt_null_or_black(rb_node *n){
     return n==NULL || n->color==RBT_COLOR_BLACK;
@@ -325,8 +330,5 @@ rb_node *rbt_pop(rb_node **proot, rb_node *n){
     ret->color = RBT_COLOR_RED;
     return ret;
 }
-
-
-
 
 
