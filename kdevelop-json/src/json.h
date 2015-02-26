@@ -56,6 +56,7 @@ typedef struct json_value_decl{
 json_value_t *json_string_new();
 json_value_t *json_string_from_pchar(const char *text, size_t length);
 void json_string_delete(json_value_t *json_string);
+int json_string_eq(json_value_t *string_a, json_value_t *string_b);
 
 // number
 json_value_t *json_number_new();
@@ -74,6 +75,7 @@ void json_object_delete(json_value_t *json_object);
 // notice: object_a is unsafe when after function call
 json_value_t *json_object_concat(json_value_t *object_a, json_value_t *object_b);
 json_value_t *json_object_at(json_value_t *json_object, size_t n);
+json_value_t *json_object_find(json_value_t *json_object, json_value_t *json_string);
 
 // array
 json_value_t *json_array_new();
@@ -100,6 +102,12 @@ void json_value_delete(json_value_t *value);
 size_t json_string_secape(char *dest, const char *text, size_t length);
 size_t json_string_unsecape(char *dest, const char *text, size_t length);
 
+size_t json_value_to_string(char *dest, json_value_t *value);
+json_value_t *json_parser(const char *text, size_t *pos);
+
 json_value_t *json_convert_value_2_string(json_value_t *value);
+json_value_t *json_convert_string_2_value(json_value_t *json_string);
+
+json_value_t *json_select(json_value_t *json_object, json_value_t *json_array_selector);
 
 #endif
