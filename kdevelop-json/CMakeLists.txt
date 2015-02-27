@@ -1,18 +1,34 @@
 cmake_minimum_required(VERSION 2.8)
 project(kdevelop-json)
 
-SET(CMAKE_C_FLAGS "-g -Wall -Wextra -Wformat=2 -Wstrict-aliasing=2 -Wcast-align -Wwrite-strings -Wformat-nonliteral -Wconversion -Wfloat-equal -Wpointer-arith -Wswitch-enum" )
 
-SET(SOURCES src/json.c)
+SET(MY_SOURCES src/json.c)
+SET(LIB_NAME "pljson")
+SET(INPUT_LIB "plstringbuilder")
 
+###
+set(PL_INCLUDE "${PROJECT_SOURCE_DIR}/../pl-include")
+set(PL_LIB "${PROJECT_SOURCE_DIR}/../pl-lib")
+set(LIBRARY_OUTPUT_PATH ${PL_LIB})
+include_directories(${PL_INCLUDE})
+link_directories(${PL_LIB})
 
-message(STATUS "copy newest string_builder")
-SET(STRING_BUILDER_SRC_DIR "${PROJECT_SOURCE_DIR}/../kdevelop-stringbuilder/src")
-exec_program(mkdir ARGS "-p" "${PROJECT_SOURCE_DIR}/src/remote")
-exec_program(cp ARGS "${STRING_BUILDER_SRC_DIR}/string_builder.*" "${PROJECT_SOURCE_DIR}/src/remote")
+link_libraries(${INPUT_LIB})
 
+add_definitions(-Wall)
+add_definitions(-Wextra)
+add_definitions(-Wformat=2)
+add_definitions(-Wstrict-aliasing=2)
+add_definitions(-Wcast-align)
+add_definitions(-Wwrite-strings)
+add_definitions(-Wformat-nonliteral)
+add_definitions(-Wconversion)
+add_definitions(-Wfloat-equal)
+add_definitions(-Wpointer-arith)
+add_definitions(-Wswitch-enum)
 
-AUX_SOURCE_DIRECTORY("${PROJECT_SOURCE_DIR}/src/remote" REMOTE_SOURCES)
-
-add_executable(kdevelop-json-test src/test.c ${SOURCES} ${REMOTE_SOURCES})
-
+add_executable(${LIB_NAME}_test ${MY_SOURCES} src/test.c)
+add_library(${LIB_NAME}_shared SHARED ${MY_SOURCES})
+add_library(${LIB_NAME}_static STATIC ${MY_SOURCES})
+set_target_properties(${LIB_NAME}_shared PROPERTIES OUTPUT_NAME ${LIB_NAME})
+set_target_properties(${LIB_NAME}_static PROPERTIES OUTPUT_NAME ${LIB_NAME})

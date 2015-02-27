@@ -1,13 +1,14 @@
 [Buildset]
-BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00,\x00k\x00d\x00e\x00v\x00e\x00l\x00o\x00p\x00-\x00s\x00t\x00r\x00i\x00n\x00g\x00b\x00u\x00i\x00l\x00d\x00e\x00r)
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00(\x00k\x00d\x00e\x00v\x00e\x00l\x00o\x00p\x00-\x00s\x00o\x00c\x00k\x00e\x00t\x005\x00-\x00t\x00a\x00r)
 
 [CMake]
-BuildDirs=/home/pl/Documents/kdevelop/socket5/kdevelop-stringbuilder/build
+BuildDirs=/home/pl/Documents/kdevelop/socket5/kdevelop-socket5-tar/build
 CMakeDir=/usr/share/cmake-2.8/Modules
 Current CMake Binary=file:///usr/bin/cmake
-CurrentBuildDir=file:///home/pl/Documents/kdevelop/socket5/kdevelop-stringbuilder/build
+CurrentBuildDir=file:///home/pl/Documents/kdevelop/socket5/kdevelop-socket5-tar/build
 CurrentBuildType=Debug
-CurrentInstallDir=
+CurrentInstallDir=file:///usr/local
+Environment Profile=default
 Extra Arguments=
 ProjectRootRelative=./
 
@@ -27,10 +28,13 @@ Dependency Action=Build
 EnvironmentGroup=default
 Executable=
 External Terminal=konsole --noclose --workdir %workdir -e %exe
-Project Target=kdevelop-stringbuilder,string-builder-test
+Project Target=kdevelop-socket5-tar,pls5tar_test
 Use External Terminal=false
 Working Directory=
 isExecutable=false
+
+[MakeBuilder]
+Number Of Jobs=1
 
 [Project]
 VersionControlSupport=kdevgit

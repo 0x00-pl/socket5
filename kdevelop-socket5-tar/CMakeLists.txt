@@ -1,16 +1,18 @@
 cmake_minimum_required(VERSION 2.8)
-project(kdevelop-stringbuilder)
+project(kdevelop-socket5-tar)
 
 
-SET(MY_SOURCES src/string_builder.c)
-SET(LIB_NAME "plstringbuilder")
-
+SET(MY_SOURCES src/net_event.c src/socket5_handler.c)
+SET(LIB_NAME "pls5tar")
+SET(INPUT_LIB "plstringbuilder")
+SET(INPUT_LIB "plrbt")
 
 set(PL_INCLUDE "${PROJECT_SOURCE_DIR}/../pl-include")
 set(PL_LIB "${PROJECT_SOURCE_DIR}/../pl-lib")
 set(LIBRARY_OUTPUT_PATH ${PL_LIB})
 include_directories(${PL_INCLUDE})
 link_directories(${PL_LIB})
+link_libraries(${INPUT_LIB})
 
 add_definitions(-Wall)
 add_definitions(-Wextra)

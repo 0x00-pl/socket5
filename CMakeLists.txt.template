@@ -1,16 +1,19 @@
 cmake_minimum_required(VERSION 2.8)
-project(kdevelop-stringbuilder)
+project(kdevelop-XXXXXX)
 
 
-SET(MY_SOURCES src/string_builder.c)
-SET(LIB_NAME "plstringbuilder")
+SET(MY_SOURCES src/XXXXXX.c)
+SET(LIB_NAME "plXXXXXX")
+SET(INPUT_LIB "plYYYYYY" "plYYYYYY")
 
-
+###
 set(PL_INCLUDE "${PROJECT_SOURCE_DIR}/../pl-include")
 set(PL_LIB "${PROJECT_SOURCE_DIR}/../pl-lib")
 set(LIBRARY_OUTPUT_PATH ${PL_LIB})
 include_directories(${PL_INCLUDE})
 link_directories(${PL_LIB})
+
+link_libraries(${INPUT_LIB})
 
 add_definitions(-Wall)
 add_definitions(-Wextra)
