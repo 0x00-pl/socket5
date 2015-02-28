@@ -25,7 +25,7 @@ static void right_rotate(rb_node **proot, rb_node *n){
     rb_node * new_n = n->left;
     
     n->left = new_n->right; 
-    if(new_n->right != NULL) {n->right->parent = n;}
+    if(new_n->right != NULL) {n->left->parent = n;}
     
     new_n->parent = n->parent;
     if(n->parent == NULL){
@@ -321,6 +321,13 @@ rb_node *rbt_pop(rb_node **proot, rb_node *n){
         }
         else{
             *(ret->parent->left==ret? &ret->parent->left: &ret->parent->right) = x;
+        }
+        
+        if(ret->left != NULL){
+            ret->left->parent = x;
+        }
+        if(ret->right != NULL){
+            ret->right->parent = x;
         }
         
         x->color = ret->color;

@@ -38,13 +38,23 @@ ne_manager_t *ne_manager_new();
 void ne_manager_delete(ne_manager_t *ne_manager);
 void ne_manager_node_write(ne_manager_t *ne_manager, rb_node_net_event_t *node, char *buff, size_t size);
 int ne_manager_node_add(ne_manager_t *ne_manager, uint32_t events_flag, int fd, event_hander_f *handler, void *extra);
+rb_node_net_event_t *ne_manager_fd_2_node(ne_manager_t *ne_manager, int fd);
 int ne_manager_node_remove(ne_manager_t *ne_manager, rb_node_net_event_t *node);
 int ne_manager_fd_remove(ne_manager_t *ne_manager, int fd);
 int ne_manager_node_modify(ne_manager_t *ne_manager, rb_node_net_event_t *node);
 int ne_manager_poll(ne_manager_t *ne_manager, int timeout);
 
+typedef struct ne_read_n_and_call_args_decl{
+    char *buff;
+    size_t need_to_read;
+    size_t readed;
+    event_hander_f *next_handler;
+} ne_read_n_and_call_args_t;
 
-// void event_hander_read_n_and_call(struct rb_node_net_event_decl *node, uint32_t event, struct ne_manager_decl *ne_manager);
-
+void ne_event_handler_read_n_and_call(struct rb_node_net_event_decl *node, uint32_t event, struct ne_manager_decl *ne_manager);
+// void ne_read_n_and_call(rb_node_net_event_t *node, uint32_t unused, ne_manager_t *ne_manager, size_t need_to_read, event_hander_f *next_handler);
+// 
+// void *read_n_and_call_data_delete(ne_read_n_and_call_data_t *ncd);
+// 
 
 #endif

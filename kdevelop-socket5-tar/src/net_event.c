@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <sys/epoll.h>
 #include <unistd.h>
+#include <string.h>
 #include "rb_tree.h"
 
 // buffer
@@ -158,11 +159,15 @@ int ne_manager_node_add(ne_manager_t *ne_manager, uint32_t events_flag, int fd, 
     return 0;
 }
 
+rb_node_net_event_t *ne_manager_fd_2_node(ne_manager_t *ne_manager, int fd){
+    return rbt_find_event(ne_manager->root, fd);
+}
+
 int ne_manager_node_remove(ne_manager_t *ne_manager, rb_node_net_event_t *node){
+    if(node == NULL){return 0;}
     epoll_ctl(ne_manager->epoll_fd, EPOLL_CTL_DEL, node->fd, NULL);
 
     rbt_pop((rb_node**)&ne_manager->root, (rb_node*)node);
-    (*node->hander)(node, EPOLLERR, ne_manager);
     close(node->fd);
     rb_node_net_event_delete(node);
     return 0;
@@ -224,9 +229,136 @@ int ne_manager_poll(ne_manager_t *ne_manager, int timeout){
     for(i=0; i<length; i++){
         cur_fd = epe[i].data.fd;
         node = rbt_find_event(ne_manager->root, cur_fd);
-        handler__(node, epe[i].events, ne_manager);
+        if(node != NULL) {handler__(node, epe[i].events, ne_manager);}
 //         (*node->hander)(node, epe[i].events);
     }
     return 0;
 }
+/*
+static ne_read_n_and_call_data_t *read_n_and_call_impl_to_data(ne_read_n_and_call_impl_t *impl){
+    ne_buffer_t *iter;
+    size_t buffer_size;
+    ne_read_n_and_call_data_t *ret = (ne_read_n_and_call_data_t*)malloc(sizeof(ne_read_n_and_call_data_t));
+    ret->next_extra = impl->next_extra;
+    if(impl->read_buffer == NULL){
+        ret->buff_size = 0;
+        ret->buff = NULL;
+    }
+    else{
+        buffer_size = 0;
+        for(iter=impl->read_buffer; iter!=NULL; iter=iter->next){
+            buffer_size += iter->size;
+        }
+        ret->buff_size = buffer_size;
+        ret->buff = (char*)malloc(buffer_size);
+        buffer_size = 0;
+        for(iter=impl->read_buffer; iter!=NULL; iter=iter->next){
+            memcpy(ret->buff+buffer_size, iter->buff, iter->size);
+            buffer_size += iter->size;
+        }
+        ne_buffer_free(impl->read_buffer);
+    }
+    free(impl);
+    return ret;
+}*/
 
+
+// static const size_t buff_block_size = 4096;
+// void ne_event_handler_read_n_and_call(rb_node_net_event_t *node, uint32_t event, ne_manager_t *ne_manager){
+//     size_t need_to_read_size;
+//     ssize_t read_size;
+//     ne_buffer_t *cur_readed_buffer;
+//     ne_read_n_and_call_impl_t *args = (ne_read_n_and_call_impl_t*)node->extra;
+//     char *buff = (char*)malloc(buff_block_size);
+//     if(event & EPOLLERR){
+//         // use next_handler to handle error
+//         node->extra = read_n_and_call_impl_to_data(args);
+//         (*args->next_hander)(node, event, ne_manager);
+//         return;
+//     }
+//     while(1){
+//         // read data
+//         need_to_read_size = buff_block_size<args->need_to_read? buff_block_size: args->need_to_read;
+//         read_size = read(node->fd, buff, need_to_read_size);
+//         if(read_size <= 0){
+//             // use next_handler to handle error
+//             node->extra = read_n_and_call_impl_to_data(args);
+//             (*args->next_hander)(node, event, ne_manager);
+//             return;
+//         }
+//         // add to buffer
+//         cur_readed_buffer = ne_buffer_from_buff(buff, (size_t)read_size);
+//         cur_readed_buffer->next = args->read_buffer;
+//         args->read_buffer = cur_readed_buffer;
+//         args->need_to_read -= (size_t)read_size;
+//         if(args->need_to_read==0 || read_size<(ssize_t)need_to_read_size){
+//             break;
+//         }
+//     }
+//     if(args->need_to_read == 0){
+//         // all read done
+//         node->extra = read_n_and_call_impl_to_data(args);
+//         node->hander = args->next_hander;
+//         ne_manager_node_modify(ne_manager, node);
+//         (*node->hander)(node, event, ne_manager);
+//         return;
+//     }
+//     else{
+//         // wait for more read, do nothing
+//     }
+// }
+
+void ne_event_handler_read_n_and_call(rb_node_net_event_t *node, uint32_t event, ne_manager_t *ne_manager){
+    size_t i;
+    ssize_t read_size;
+    ne_read_n_and_call_args_t *args = (ne_read_n_and_call_args_t*)node->extra;
+    if(event & EPOLLERR){
+        // use next_handler to handle error
+        (*(args->next_handler))(node, event, ne_manager);
+        return;
+    }
+    // read
+    if(args->readed < args->need_to_read){
+        read_size = read(node->fd, args->buff + args->readed, args->need_to_read - args->readed);
+        if(read_size <= 0){
+            // use next_handler to handle error
+            (*(args->next_handler))(node, event, ne_manager);
+            return;
+        }
+        args->readed += (size_t)read_size;
+        //debug
+        printf("recv[%d]: ", node->fd);
+        for(i=0; i<args->need_to_read; i++){
+            printf("%02x ", (uint8_t)args->buff[i]);
+        }
+        printf("\n");
+    }
+    if(args->readed >= args->need_to_read){
+        node->hander = args->next_handler;
+        (*(args->next_handler))(node, event, ne_manager);
+        return;
+    }else{
+        // no handle change, do nothong.
+    }
+}
+
+// void ne_read_n_and_call(rb_node_net_event_t *node, uint32_t unused, ne_manager_t *ne_manager, size_t need_to_read, event_hander_f *next_handler){
+//     (void)unused;
+//     ne_read_n_and_call_args_t *args = (ne_read_n_and_call_args_t*)malloc(sizeof(ne_read_n_and_call_args_t));
+//     args->next_handler = next_handler;
+//     args->need_to_read = need_to_read;
+//     args->buff = NULL;
+//     // next_handler is read_n_and_call
+//     node->extra = args;
+//     node->hander = &ne_event_handler_read_n_and_call;
+//     node->epoll_flag |= EPOLLIN; 
+//     ne_manager_node_modify(ne_manager, node);
+// }
+
+// void *read_n_and_call_data_delete(ne_read_n_and_call_data_t *ncd){
+//     if(ncd->buff == NULL){return NULL;}
+//      void *ret = ncd->next_extra;
+//      if(ncd->buff != NULL){free(ncd->buff);}
+//      free(ncd);
+//      return ret;
+// }

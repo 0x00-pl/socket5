@@ -8,6 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "net_event.h"
+#include "socket5_tar_handler.h"
 
 int is_exit = 0;
 
@@ -89,8 +90,30 @@ int create_tcp_entry(uint16_t port){
 //     write(fd, buff, (size_t)length);
 // }
 
+// void handle_read(rb_node_net_event_t *node, uint32_t event, ne_manager_t *ne_manager);
+// void handle_inc_each_char(rb_node_net_event_t *node, uint32_t event, ne_manager_t *ne_manager){
+//     size_t i;
+//     ne_read_n_and_call_data_t *arg = node->extra;
+//     if(event & EPOLLERR){
+//         printf("[waring] link break.\n");
+//         ne_manager_fd_remove(ne_manager, node->fd);
+//         close(node->fd);
+//         return;
+//     }
+//     
+//     for(i=0; i<arg->buff_size; i++){
+//         arg->buff[i]++;
+//     }
+//     ne_manager_node_write(ne_manager, node, arg->buff, arg->buff_size);
+//     free(arg);
+//     
+//     node->hander = &handle_read;
+//     node->extra = 0;
+//     node->epoll_flag = EPOLLIN;
+//     ne_manager_node_modify(ne_manager, node);
+// }
 
-void handle_read(rb_node_net_event_t *node, uint32_t event, struct ne_manager_decl *ne_manager){
+void handle_read(rb_node_net_event_t *node, uint32_t event, ne_manager_t *ne_manager){
     ssize_t length;
     char *buff = (char*)malloc(17);
     length = read(node->fd, buff, 16);
@@ -105,6 +128,9 @@ void handle_read(rb_node_net_event_t *node, uint32_t event, struct ne_manager_de
     printf("revc[%d]: %s", (int)length, buff);
     if(strcmp(buff,"exit")==0){
         is_exit = 1;
+    }
+    if(strcmp(buff,"10add1\n")==0){
+//         ne_read_n_and_call(ne_manager, node, 10, &handle_inc_each_char);
     }
 }
 // void handle_write(int fd, uint32_t events, void *extra){
@@ -128,7 +154,7 @@ void handle_read(rb_node_net_event_t *node, uint32_t event, struct ne_manager_de
 //     }
 // }
 
-void handle_listen(rb_node_net_event_t *node, uint32_t event, struct ne_manager_decl *ne_manager){
+void handle_listen(rb_node_net_event_t *node, uint32_t event, ne_manager_t *ne_manager){
     struct sockaddr ru;
     socklen_t len = sizeof(struct sockaddr_in);
     int ru_fd = accept(node->fd, &ru, &len);
@@ -137,6 +163,7 @@ void handle_listen(rb_node_net_event_t *node, uint32_t event, struct ne_manager_
         return;
     }
     ne_manager_node_add(ne_manager, EPOLLIN, ru_fd, &handle_read, 0);
+    s5tar_entry(ne_manager_fd_2_node(ne_manager, ru_fd), ne_manager);
 //     ne_epoll_reg(global_proot_get(), global_epoll_fd_get(), EPOLLIN, ru_fd, &handle_read, 0);
 }
 

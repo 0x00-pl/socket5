@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(kdevelop-socket5-tar)
 
 
-SET(MY_SOURCES src/net_event.c src/socket5_handler.c)
+SET(MY_SOURCES src/net_event.c src/socket5_convert.c src/socket5_tar_handler.c)
 SET(LIB_NAME "pls5tar")
 SET(INPUT_LIB "plstringbuilder")
 SET(INPUT_LIB "plrbt")
